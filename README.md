@@ -5,7 +5,9 @@ This bot will be used on the [God's Trigger Discord](https://discord.gg/QyRZj8G)
 ## Installation
 
 To run this bot for yourself, first you need a bot account which can be created on the [Discord developer portal](https://discordapp.com/developers).
+
 You then need a YAML file called `config.yml` in the `src` directory, containing the `token`, `owner_id` and `client_id`.
+
 Lastly, you will need to have Docker and docker-compose installed.
 
 ## Usage

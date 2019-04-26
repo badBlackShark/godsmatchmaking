@@ -1,18 +1,16 @@
-# gods_matchmaking
+# God's Matchmaking
 
-TODO: Write a description here
+This bot will be used on the [God's Trigger Discord](https://discord.gg/QyRZj8G) to help players find each other for online co-op. More features, such as srcom tracking, might be added in the future.
 
 ## Installation
 
-TODO: Write installation instructions here
+To run this bot for yourself, first you need a bot account which can be created on the [Discord developer portal](https://discordapp.com/developers).
+You then need a YAML file called `config.yml` in the `src` directory, containing the `token`, `owner_id` and `client_id`.
+Lastly, you will need to have Docker and docker-compose installed.
 
 ## Usage
 
-TODO: Write usage instructions here
-
-## Development
-
-TODO: Write development instructions here
+Simply use `docker-compose up` to launch the application.
 
 ## Contributing
 

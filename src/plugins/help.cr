@@ -15,7 +15,7 @@ class GodsMatchmaking::Help
     fields = Array(Discord::EmbedField).new
 
     fields << Discord::EmbedField.new(
-      name: "-join",
+      name: "+join",
       value: "Joins you into the queue of people who are currently looking for partners.\n"\
              "Automatically removes you from the queue when you go offline."
     )

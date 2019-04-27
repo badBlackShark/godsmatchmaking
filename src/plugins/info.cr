@@ -6,15 +6,14 @@ class GodsMatchmaking::Info
     middleware: Command.new("info")
   )]
   def info(payload, _ctx)
-    bot = client.cache.try &.resolve_user(GodsMatchmaking.config.client_id)
-    return unless bot
+    bot = client.cache.try &.resolve_current_user || raise "Cache unavailable"
 
     embed             = Discord::Embed.new
     embed.author      = Discord::EmbedAuthor.new(name: bot.username, icon_url: bot.avatar_url)
-    embed.description = "Developed by [badBlackShark](https://github.com/badBlackShark/), written in [Crystal](https://crystal-lang.org/).\n"\
-                        "The bot's code can be found [here](https://github.com/badBlackShark/godsmatchmaking)."
+    embed.description = "I was written in [Crystal](https://crystal-lang.org/) by [badBlackShark](https://github.com/badBlackShark/).\n"\
+                        "My code can be found [here](https://github.com/badBlackShark/godsmatchmaking)."
     embed.fields      = [Discord::EmbedField.new(
-        name: "Packages Used",
+        name: "I was built using these packages",
         value:
           "**[discordcr](https://github.com/meew0/discordcr)** *by meew0*
           **[discordcr-middleware](https://github.com/z64/discordcr-middleware)** *by z64*

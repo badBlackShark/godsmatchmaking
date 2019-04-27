@@ -1,14 +1,29 @@
 class GodsMatchmaking::Matchmaking
   include Discord::Plugin
 
+  @[Flags]
+  enum Platform
+    PC
+    Xbox
+    Ps4
+  end
+
+  @[Flags]
+  enum PlayerKind
+    Angel
+    Demon
+  end
+
+  record(Properties, platforms : Platform, player_kind : PlayerKind)
+
   # User => Roles and platforms
-  getter queue = Hash(Discord::Snowflake, Hash(Symbol, Bool)).new
+  getter queue = Hash(Discord::Snowflake, Properties).new
   # These are all placeholders until the real values get grabbed.
-  getter angel = Discord::Snowflake.new(0_u64)
-  getter demon = Discord::Snowflake.new(0_u64)
-  getter pc    = Discord::Snowflake.new(0_u64)
-  getter xbox  = Discord::Snowflake.new(0_u64)
-  getter ps4   = Discord::Snowflake.new(0_u64)
+  getter! angel : Discord::Snowflake
+  getter! demon : Discord::Snowflake
+  getter! pc    : Discord::Snowflake
+  getter! xbox  : Discord::Snowflake
+  getter! ps4   : Discord::Snowflake
 
   @[Discord::Handler(
     event: :message_create,
@@ -23,14 +38,11 @@ class GodsMatchmaking::Matchmaking
       return
     end
 
-    queue[payload.author.id] = Hash(Symbol, Bool).new
-
     member = client.get_guild_member(ctx[GuildChecker::Result].id, payload.author.id)
     valid = update_properties(member)
 
     unless valid
       client.create_message(payload.channel_id, "You need to choose at least one platform to play on.")
-      queue.delete(payload.author.id)
       return
     end
 
@@ -87,7 +99,7 @@ class GodsMatchmaking::Matchmaking
   @[Discord::Handler(
     event: :guild_create
   )]
-  def ready(payload)
+  def fetch_roles(payload)
     # We can do this because the bot is only in one server
     update_roles(payload)
   end
@@ -122,7 +134,7 @@ class GodsMatchmaking::Matchmaking
     end
   end
 
-  private def match_embed(matches : Hash(Discord::Snowflake, Hash(Symbol, Bool)))
+  private def match_embed(matches : Hash(Discord::Snowflake, Properties))
     client = GodsMatchmaking.bot.client
     cache  = GodsMatchmaking.bot.cache
     embed  = Discord::Embed.new
@@ -142,14 +154,17 @@ class GodsMatchmaking::Matchmaking
       # things out of a Tuple by ID, not by the symbol.
       match = match[0]
 
-      properties = "Plays "
-      properties += [queue[match][:angel] ? "**Harry**" : nil, queue[match][:demon] ? "**Judy**" : nil].compact.join(" and ")
-      properties += " on "
+      properties = String.build do |str|
+        str << "Plays "
 
-      if queue[match][:pc] && queue[match][:xbox] && queue[match][:ps4]
-        properties += "**all platforms**."
-      else
-        properties += [queue[match][:pc] ? "**PC**" : nil, queue[match][:xbox] ? "**Xbox One**" : nil, queue[match][:ps4] ? "**PS4**" : nil].compact.join(" and ") + "."
+        str << [queue[match].player_kind.angel? ? "**Harry**" : nil, queue[match].player_kind.demon? ? "**Judy**" : nil].compact.join(" and ")
+        str << " on "
+
+        if queue[match].platforms.pc? && queue[match].platforms.xbox? && queue[match].platforms.ps4?
+          str << "**all platforms**."
+        else
+          str << [queue[match].platforms.pc? ? "**PC**" : nil, queue[match].platforms.xbox? ? "**Xbox One**" : nil, queue[match].platforms.ps4? ? "**PS4**" : nil].compact.join(" and ") << "."
+        end
       end
 
       fields << Discord::EmbedField.new(
@@ -170,16 +185,16 @@ class GodsMatchmaking::Matchmaking
     # Exclude the member itself
     filtered = queue.reject { |m| m == user.id }
 
-    disregard_char = queue[user.id][:angel] && queue[user.id][:demon]
+    disregard_char = queue[user.id].player_kind.angel? && queue[user.id].player_kind.demon?
 
     matches = filtered.select do |match|
-      matching_platforms  = queue[user.id][:pc] && queue[match][:pc]     ||
-                            queue[user.id][:xbox] && queue[match][:xbox] ||
-                            queue[user.id][:ps4] && queue[match][:ps4]
+      matching_platforms  = queue[user.id].platforms.pc?   && queue[match].platforms.pc?   ||
+                            queue[user.id].platforms.xbox? && queue[match].platforms.xbox? ||
+                            queue[user.id].platforms.ps4?  && queue[match].platforms.ps4?
 
       matching_characters = disregard_char ||
-                            queue[user.id][:angel] != queue[match][:angel] ||
-                            queue[user.id][:demon] != queue[match][:demon]
+                            queue[user.id].player_kind.angel? != queue[match].player_kind.angel? ||
+                            queue[user.id].player_kind.demon? != queue[match].player_kind.demon?
 
       matching_platforms && matching_characters
     end
@@ -188,23 +203,24 @@ class GodsMatchmaking::Matchmaking
   end
 
   private def update_properties(member : Discord::GuildMember)
-    is_angel = !member.roles.find { |r| r == @angel }.nil?
-    is_demon = !member.roles.find { |r| r == @demon }.nil?
-    on_pc    = !member.roles.find { |r| r == @pc }.nil?
-    on_xbox  = !member.roles.find { |r| r == @xbox }.nil?
-    on_ps4   = !member.roles.find { |r| r == @ps4 }.nil?
+    player_kind = 0
+    player_kind += 1 unless member.roles.find { |r| r == @angel }.nil?
+    player_kind += 2 unless member.roles.find { |r| r == @demon }.nil?
+
+    platform = 0
+    platform += 1 unless member.roles.find { |r| r == @pc }.nil?
+    platform += 2 unless member.roles.find { |r| r == @xbox }.nil?
+    platform += 4 unless member.roles.find { |r| r == @ps4 }.nil?
 
     # At least one platform needs to be chosen
-    return false unless on_pc || on_xbox || on_ps4
+    return false if platform == 0
 
     # If they chose neither, both will be assumed
-    is_angel = is_demon = true if !is_angel && !is_demon
+    player_kind = 3 if player_kind == 0
 
-    queue[member.user.id][:angel] = is_angel ? true : false
-    queue[member.user.id][:demon] = is_demon ? true : false
-    queue[member.user.id][:pc]    = on_pc    ? true : false
-    queue[member.user.id][:xbox]  = on_xbox  ? true : false
-    queue[member.user.id][:ps4]   = on_ps4   ? true : false
+    properties = Properties.new(Platform.from_value(platform), PlayerKind.from_value(player_kind))
+
+    queue[member.user.id] = properties
 
     return true
   end

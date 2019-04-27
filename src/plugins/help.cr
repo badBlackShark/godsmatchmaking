@@ -6,8 +6,7 @@ class GodsMatchmaking::Help
     middleware: Command.new("help")
   )]
   def help(payload, _ctx)
-    bot = client.cache.try &.resolve_user(GodsMatchmaking.config.client_id)
-    return unless bot
+    bot = client.cache.try &.resolve_current_user || raise "Cache unavailable"
 
     embed             = Discord::Embed.new
     embed.author      = Discord::EmbedAuthor.new(name: bot.username, icon_url: bot.avatar_url)
@@ -29,7 +28,6 @@ class GodsMatchmaking::Help
     embed.colour = 0x733430
 
     client.create_message(payload.channel_id, "", embed)
-    nil
   end
 
   @[Discord::Handler(

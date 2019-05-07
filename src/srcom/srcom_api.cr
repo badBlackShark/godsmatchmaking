@@ -10,8 +10,8 @@ class SrcomApi
   end
 
   def get_runs
-    # This needs to be adjusted to support pagination as soon as there are more than 200 runs on the boards.
-    # This will likely never happen.
+    # This needs to be adjusted to support pagination as soon as there are more
+    # than 200 runs on the boards. This will likely never happen.
     Crest.get(BASE_URL + "runs?game=#{@game_id}&max=200&embed=category,players")
   end
 end

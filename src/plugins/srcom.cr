@@ -14,16 +14,6 @@ class GodsMatchmaking::Srcom
   end
 
   @[Discord::Handler(
-    event: :message_create,
-    middleware: Command.new("allRuns")
-  )]
-  def allRuns(payload, ctx)
-    @runs.each do |run|
-      client.create_message(payload.channel_id, "", run.to_embed)
-    end
-  end
-
-  @[Discord::Handler(
     event: :guild_create
   )]
   def ensure_speedrun_channel(payload)

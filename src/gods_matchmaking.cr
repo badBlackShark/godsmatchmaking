@@ -6,6 +6,7 @@ require "discordcr-middleware"
 require "./config"
 require "./plugins/*"
 require "./middlewares/*"
+require "./srcom/*"
 
 module GodsMatchmaking
   class Bot

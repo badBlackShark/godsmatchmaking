@@ -1,5 +1,17 @@
 version: 1.0
 shards:
+  bisect:
+    github: spider-gazelle/bisect
+    version: 1.1.1
+
+  crest:
+    github: mamantoha/crest
+    version: 0.19.0
+
+  cron_parser:
+    github: kostya/cron_parser
+    version: 0.2.0
+
   discordcr:
     github: meew0/discordcr
     commit: 1d40f5fa0c9069a817ddbb3daf26782607d69d7d
@@ -15,4 +27,8 @@ shards:
   rate_limiter:
     github: z64/rate_limiter
     commit: b9992a7c474f9f863aa34ac677244d6b520cba97
+
+  tasker:
+    github: spider-gazelle/tasker
+    version: 1.2.0
 

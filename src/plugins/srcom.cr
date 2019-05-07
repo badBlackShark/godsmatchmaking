@@ -33,7 +33,7 @@ class GodsMatchmaking::Srcom
   end
 
   def request_loop
-    Tasker.instance.every() do
+    Tasker.instance.every(2.minutes) do
       all_runs = JSON.parse(@api.get_runs.body)["data"].as_a.map { |raw| Run.from_json(raw) }
       all_runs.reject { |run| !@runs.find { |r| r.id == run.id && r.status == run.status }.nil? }.each do |new_run|
         # For some reason the `getter!` wasn't enough, needs another `not_nil!`

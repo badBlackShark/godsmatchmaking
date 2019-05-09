@@ -19,10 +19,11 @@ class GodsMatchmaking::Help
       value: "Joins you into the queue of people who are currently looking for partners.\n"\
              "Automatically removes you from the queue when you go offline."
     )
-    fields << Discord::EmbedField.new(name: "+leave",   value: "Removes you from the queue.")
-    fields << Discord::EmbedField.new(name: "+queue",   value: "Shows all the people currently looking for partners.")
-    fields << Discord::EmbedField.new(name: "+matches", value: "Shows you everyone in the queue who can potentially play with you.")
-    fields << Discord::EmbedField.new(name: "+info",    value: "Displays some info about the development of this bot.")
+    fields << Discord::EmbedField.new(name: "+leave",         value: "Removes you from the queue.")
+    fields << Discord::EmbedField.new(name: "+queue",         value: "Shows all the people currently looking for partners.")
+    fields << Discord::EmbedField.new(name: "+matches",       value: "Shows you everyone in the queue who can potentially play with you.")
+    fields << Discord::EmbedField.new(name: "+info",          value: "Displays some info about the development of this bot.")
+    fields << Discord::EmbedField.new(name: "+wr <category>", value: "Shows you the current world record in <category>.")
 
     embed.fields = fields
     embed.colour = 0x733430

@@ -10,6 +10,7 @@ class Run
     getter status     : String
     getter comment    : String
     getter rej_reason : String?
+    property rank     : Int32?
 
   def initialize(
     @id         : String,
@@ -20,7 +21,8 @@ class Run
     @video      : String,
     @status     : String,
     @comment    : String,
-    @rej_reason : String?
+    @rej_reason : String?,
+    @rank       : Int32?
   )
   end
 
@@ -44,8 +46,9 @@ class Run
       raw_data["players"]["data"].as_a.map { |p| p["names"]["international"].as_s },
       video,
       status,
-      raw_data["comment"].as_s,
-      rej_reason
+      raw_data["comment"].as_s? || "*No comment given*",
+      rej_reason,
+      nil
     )
   end
 
@@ -64,8 +67,9 @@ class Run
     end
 
     fields = [Discord::EmbedField.new(
-      name:  "Run time: #{time}",
-      value: "Category: #{@category}\n"\
+      name:  (@status == "new" ? "Potential rank: " : "Rank: ") + "#{@rank || "*Run not ranked*"}",
+      value: "Time: #{time}\n"\
+             "Category: #{@category}\n"\
              "Player(s): #{@players.join(", ")}\n"\
              "Video: #{@video}\n"\
              "Comment: #{@comment}"

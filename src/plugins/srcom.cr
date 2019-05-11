@@ -9,6 +9,7 @@ class GodsMatchmaking::Srcom
   getter! channel    : Discord::Snowflake
   getter ranked_runs = Hash(String, Array(Run)).new
 
+  # Only used for testing
   def initialize(@api : SrcomApi, @runs : Array(Run), @categories : Array(Category), @channel : Discord::Snowflake)
   end
 

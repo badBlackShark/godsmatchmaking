@@ -9,6 +9,9 @@ class GodsMatchmaking::Srcom
   getter! channel    : Discord::Snowflake
   getter ranked_runs = Hash(String, Array(Run)).new
 
+  def initialize(@api : SrcomApi, @runs : Array(Run), @categories : Array(Category), @channel : Discord::Snowflake)
+  end
+
   def initialize
     @api  = SrcomApi.new("kdkz2mgd")
     @runs = JSON.parse(@api.get_runs.body)["data"].as_a.map { |raw| Run.from_json(raw) }

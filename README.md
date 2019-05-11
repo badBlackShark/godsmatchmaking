@@ -16,7 +16,7 @@ Simply use `docker-compose up` to launch the application.
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/gods_matchmaking/fork>)
+1. Fork it (<https://github.com/badBlackShark/gods_matchmaking/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -24,4 +24,4 @@ Simply use `docker-compose up` to launch the application.
 
 ## Contributors
 
-- [badBlackShark](https://github.com/your-github-user) - creator and maintainer
+- [badBlackShark](https://github.com/badBlackShark) - creator and maintainer
